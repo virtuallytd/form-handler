@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submissions</title>
+    <link rel="stylesheet" href="/static/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <!-- Navigation Menu -->
+        <nav class="bg-white shadow-md rounded-lg mb-4">
+            <ul class="flex p-4">
+                <li class="mr-6">
+                    <a href="/submissions" class="text-blue-500 hover:text-blue-800">Submissions</a>
+                </li>
+                <li class="mr-6">
+                    <a href="/rate-limits" class="text-blue-500 hover:text-blue-800">Rate Limits</a>
+                </li>
+                <li class="mr-6">
+                    <a href="/logout" class="text-blue-500 hover:text-blue-800">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <h1 class="text-3xl font-bold mb-4">Form Submissions</h1>
+        <table class="min-w-full bg-white shadow-md rounded-lg">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b-2">ID</th>
+                    <th class="py-2 px-4 border-b-2">Form ID</th>
+                    <th class="py-2 px-4 border-b-2">Name</th>
+                    <th class="py-2 px-4 border-b-2">Email</th>
+                    <th class="py-2 px-4 border-b-2">Message</th>
+                    <th class="py-2 px-4 border-b-2">File</th>
+                    <th class="py-2 px-4 border-b-2">Read</th>
+                    <th class="py-2 px-4 border-b-2">Created At</th>
+                    <th class="py-2 px-4 border-b-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="submissions">
+                <!-- Data will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        async function loadData() {
+            const response = await fetch('/api/submissions');
+            const data = await response.json();
+            const tableBody = document.getElementById('submissions');
+            tableBody.innerHTML = '';
+            data.forEach(submission => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b">${submission.id}</td>
+                    <td class="py-2 px-4 border-b">${submission.form_id}</td>
+                    <td class="py-2 px-4 border-b">${submission.name}</td>
+                    <td class="py-2 px-4 border-b">${submission.email}</td>
+                    <td class="py-2 px-4 border-b">${submission.message}</td>
+                    <td class="py-2 px-4 border-b"><a href="/uploads/${submission.file}" download>${submission.file}</a></td>
+                    <td class="py-2 px-4 border-b">${submission.read}</td>
+                    <td class="py-2 px-4 border-b">${submission.created_at}</td>
+                    <td class="py-2 px-4 border-b">
+                        <button class="bg-red-500 text-white py-1 px-2 rounded" onclick="deleteSubmission(${submission.id})">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        async function deleteSubmission(id) {
+            const response = await fetch(`/api/submissions/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                loadData();
+            } else {
+                alert('Failed to delete submission');
+            }
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>

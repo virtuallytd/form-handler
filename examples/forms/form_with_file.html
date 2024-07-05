@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Default Form Demo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();
+
+            console.log("Submitting form...");
+
+            const formElement = document.querySelector('form');
+            const formData = new FormData(formElement);
+
+            try {
+                const response = await fetch('http://localhost:8080/submit', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('response').innerText = result.success;
+                    document.getElementById('success-banner').classList.remove('hidden');
+                    document.getElementById('error-banner').classList.add('hidden');
+                    formElement.reset();
+                    console.log("Form submitted successfully:", result);
+                } else {
+                    document.getElementById('error').innerText = result.error;
+                    document.getElementById('error-banner').classList.remove('hidden');
+                    document.getElementById('success-banner').classList.add('hidden');
+                    console.error("Error submitting form:", result);
+                }
+            } catch (error) {
+                console.error("Error submitting form:", error);
+                document.getElementById('error').innerText = "An unexpected error occurred.";
+                document.getElementById('error-banner').classList.remove('hidden');
+                document.getElementById('success-banner').classList.add('hidden');
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Default Form Demo</h1>
+        <div id="success-banner" class="hidden bg-green-500 text-white p-4 mb-4 rounded">
+            Form submitted successfully!
+        </div>
+        <div id="error-banner" class="hidden bg-red-500 text-white p-4 mb-4 rounded">
+            <span id="error"></span>
+        </div>
+        <form onsubmit="submitForm(event)" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-6">
+            <input type="hidden" name="formid" value="a1b2c3d4e5f6">
+            <div class="mb-4">
+                <label for="name" class="block text-gray-700">Name:</label>
+                <input type="text" id="name" name="name" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700">Email:</label>
+                <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div class="mb-4">
+                <label for="message" class="block text-gray-700">Message:</label>
+                <textarea id="message" name="message" required class="w-full p-2 border border-gray-300 rounded"></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="file" class="block text-gray-700">Upload File:</label>
+                <input type="file" id="file" name="file" class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded">Submit</button>
+        </form>
+        <p id="response" class="mt-4"></p>
+    </div>
+</body>
+
+</html>

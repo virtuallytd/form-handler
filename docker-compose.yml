@@ -1,0 +1,25 @@
+services:
+  form-handler:
+    build: .
+    container_name: form-handler
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config/config.json:/app/config/config.json
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+      - ./data:/app/data
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - form-handler-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  form-handler-net:
+    driver: bridge

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limits</title>
+    <link rel="stylesheet" href="/static/tailwind.min.css">
+    <script>
+        async function loadRateLimits() {
+            const response = await fetch('/api/rate-limits');
+            const rateLimits = await response.json();
+            const tableBody = document.getElementById('rate-limits');
+            tableBody.innerHTML = '';
+            for (const [ip, timestamps] of Object.entries(rateLimits)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b">${ip}</td>
+                    <td class="py-2 px-4 border-b">${timestamps.join('<br>')}</td>
+                    <td class="py-2 px-4 border-b">
+                        <button class="bg-red-500 text-white py-1 px-2 rounded" onclick="clearRateLimit('${ip}')">Clear</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+
+        async function clearRateLimit(ip) {
+            const response = await fetch(`/api/rate-limits/${ip}`, { method: 'DELETE' });
+            if (response.ok) {
+                loadRateLimits();
+            } else {
+                alert('Failed to clear rate limit');
+            }
+        }
+
+        window.onload = loadRateLimits;
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <!-- Navigation Menu -->
+        <nav class="bg-white shadow-md rounded-lg mb-4">
+            <ul class="flex p-4">
+                <li class="mr-6">
+                    <a href="/submissions" class="text-blue-500 hover:text-blue-800">Submissions</a>
+                </li>
+                <li class="mr-6">
+                    <a href="/rate-limits" class="text-blue-500 hover:text-blue-800">Rate Limits</a>
+                </li>
+                <li class="mr-6">
+                    <a href="/logout" class="text-blue-500 hover:text-blue-800">Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <h1 class="text-3xl font-bold mb-4">Current Rate Limits</h1>
+        <table class="min-w-full bg-white shadow-md rounded-lg">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b-2">IP Address</th>
+                    <th class="py-2 px-4 border-b-2">Request Timestamps</th>
+                    <th class="py-2 px-4 border-b-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="rate-limits">
+                <!-- Data will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
