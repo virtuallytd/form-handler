@@ -42,9 +42,6 @@ Form Handler is a web application designed to handle form submissions securely. 
 │   └── forms
 │       ├── form_with_file.html
 │       └── form_with_text.html
-├── helper_scripts
-│   ├── clean_and_build_container.sh
-│   └── list_structure_and_content.sh
 ├── logs
 │   └── app.log
 └── tests
@@ -134,7 +131,7 @@ These examples demonstrate how to structure your forms to submit data to the For
 1. **Build the Docker image:**
 
     ```sh
-    ./helper_scripts/clean_and_build_container.sh
+    docker build -t form-handler .
     ```
 
 2. **Run the Docker container:**
