@@ -138,10 +138,10 @@ These examples demonstrate how to structure your forms to submit data to the For
 
     ```sh
     docker run -p 8080:8080 \
-               -v "$(pwd)/app/config/config.json:/app/config/config.json" \
-               -v "$(pwd)/app/logs:/app/logs" \
-               -v "$(pwd)/app/uploads:/app/uploads" \
-               -v "$(pwd)/app/data:/app/data" \
+               -v "$(pwd)/config/config.json:/app/config/config.json" \
+               -v "$(pwd)/logs:/app/logs" \
+               -v "$(pwd)/uploads:/app/uploads" \
+               -v "$(pwd)/data:/app/data" \
                --env-file "$(pwd)/.env" \
                --name form-handler \
                form-handler
