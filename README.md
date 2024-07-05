@@ -16,7 +16,7 @@ Form Handler is a web application designed to handle form submissions securely. 
 ## Directory Structure
 
 ```
-/Users/adavis/Projects/private/form-handler
+form-handler
 ├── Dockerfile
 ├── README.md
 ├── app
